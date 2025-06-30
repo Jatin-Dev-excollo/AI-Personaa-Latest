@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField, InputAdornment, Box } from "@mui/material";
+import { TextField, InputAdornment, Box, useTheme, useMediaQuery } from "@mui/material";
 import { CiSearch } from "react-icons/ci";
 
 interface SearchBarProps {
@@ -17,55 +17,54 @@ const SearchBar: React.FC<SearchBarProps> = ({
   fullWidth = false,
   maxWidth,
 }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
+
   return (
-    <Box sx={{ mb: 3 }}>
-      {/* Center section - Search */}
-      <Box
+    <Box sx={{ mb: { xs: 2, sm: 3 }, width: "100%", display: "flex", justifyContent: "center" }}>
+      <TextField
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        variant="outlined"
+        size={isMobile ? "medium" : "small"}
         sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          ...(fullWidth
-            ? { width: '100%', mx: 0, flex: 'unset' }
-            : { flex: 1, mx: 5 }),
+          maxWidth: maxWidth !== undefined ? maxWidth : (isMobile ? "100%" : isTablet ? 350 : 500),
+          width: fullWidth ? "100%" : undefined,
+          minWidth: { xs: 180, sm: 250, md: 350 },
+          "& .MuiOutlinedInput-root": {
+            backgroundColor: "#E8F2ED",
+            borderRadius: 2,
+            height: { xs: 48, sm: 40 },
+            "& fieldset": {
+              border: "none",
+            },
+            "&:hover fieldset": {
+              border: "none",
+            },
+            "&.Mui-focused fieldset": {
+              border: "1px solid #059134",
+            },
+          },
+          "& .MuiOutlinedInput-input": {
+            fontSize: { xs: "16px", sm: "14px" },
+            padding: { xs: "12px 16px", sm: "8px 12px" },
+          },
+          "& .MuiOutlinedInput-input::placeholder": {
+            color: "#059134",
+            opacity: 1,
+            fontSize: { xs: "16px", sm: "14px" },
+          },
         }}
-      >
-        <TextField
-          placeholder={placeholder}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          variant="outlined"
-          size="small"
-          sx={{
-            maxWidth: maxWidth !== undefined ? maxWidth : (fullWidth ? 1500 : 1000),
-            width: "100%",
-            "& .MuiOutlinedInput-root": {
-              backgroundColor: "#E8F2ED",
-              borderRadius: 2,
-              "& fieldset": {
-                border: "none",
-              },
-              "&:hover fieldset": {
-                border: "none",
-              },
-              "&.Mui-focused fieldset": {
-                border: "1px solid #059134",
-              },
-            },
-            "& .MuiOutlinedInput-input::placeholder": {
-              color: "#059134",
-              opacity: 1,
-            },
-          }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <CiSearch size={20} color="#059134" />
-              </InputAdornment>
-            ),
-          }}
-        />
-      </Box>
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <CiSearch size={isMobile ? 24 : 20} color="#059134" />
+            </InputAdornment>
+          ),
+        }}
+      />
     </Box>
   );
 };

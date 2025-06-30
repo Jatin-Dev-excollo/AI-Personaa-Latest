@@ -9,6 +9,8 @@ import {
   Button,
   Stack,
   Dialog,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import { CiSettings } from "react-icons/ci";
@@ -24,11 +26,13 @@ interface ChatHeaderProps {
   backIcon?: React.ReactNode;
 }
 
-const SIDEBAR_WIDTH = 220; // Match Sidebar width
-
 const ChatHeader: React.FC<ChatHeaderProps> = ({ onBack, onMenu, isSidebarOpen, backIcon }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const SIDEBAR_WIDTH = isMobile ? 280 : 220; // Match Sidebar width
+
   return (
     <AppBar
       position="relative"
@@ -40,7 +44,11 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ onBack, onMenu, isSidebarOpen, 
         borderBottom: '1px solid #e9ecef',
       }}
     >
-      <Toolbar sx={{ justifyContent: "space-between", px: 3, minHeight: 64 }}>
+      <Toolbar sx={{ 
+        justifyContent: "space-between", 
+        px: { xs: 2, sm: 3 }, 
+        minHeight: { xs: 56, sm: 64 } 
+      }}>
         {/* Left-side spacer when sidebar is open */}
         {isSidebarOpen && <Box sx={{ width: `${SIDEBAR_WIDTH}px`, flexShrink: 0 }} />}
         {/* Left section - Back and Menu, hidden when sidebar is open */}
@@ -58,11 +66,11 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ onBack, onMenu, isSidebarOpen, 
                 size="small"
                 onClick={onBack}
                 sx={{
-                  fontSize: 28,
+                  fontSize: { xs: 24, sm: 28 },
                   color: '#000',
                   fontWeight: 900,
                   fontFamily: 'Inter, Roboto, Helvetica, Arial, sans-serif',
-                  p: 1,
+                  p: { xs: 0.8, sm: 1 },
                   mr: 0.2,
                   background: 'none',
                   border: 'none',
@@ -80,10 +88,10 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ onBack, onMenu, isSidebarOpen, 
                 size="small"
                 sx={{
                   color: '#000',
-                  fontSize: 22,
+                  fontSize: { xs: 20, sm: 22 },
                   fontWeight: 900,
                   fontFamily: 'Inter, Roboto, Helvetica, Arial, sans-serif',
-                  p: 0.7,
+                  p: { xs: 0.6, sm: 0.7 },
                   ml: 0.2,
                   background: 'none',
                   border: 'none',
@@ -96,64 +104,73 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ onBack, onMenu, isSidebarOpen, 
                 }}
                 onClick={onMenu}
               >
-                <MenuIcon sx={{ fontSize: 22, fontWeight: 900 }} />
+                <MenuIcon sx={{ fontSize: { xs: 20, sm: 22 }, fontWeight: 900 }} />
               </IconButton>
             </>
           )}
         </Box>
 
         {/* Center section - Spacer (matches Discover header) */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 4, flex: 1, mx: 4 }}></Box>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 4, flex: 1, mx: { xs: 2, sm: 4 } }}></Box>
 
         {/* Right section - Navigation, Settings, Avatar */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Stack direction="row">
-            <Button
-              sx={{
-                color: location.pathname === "/" ? "#059134" : "#666",
-                fontFamily: 'Inter, Roboto, Helvetica, Arial, sans-serif',
-                fontWeight: 500,
-                fontSize: "16px",
-                lineHeight: "24px",
-                letterSpacing: 0,
-                textTransform: "none",
-                "&:hover": {
-                  backgroundColor: "transparent",
-                  color: "#059134",
-                },
-              }}
-              onClick={() => navigate("/")}
-            >
-              Discover
-            </Button>
-            <Button
-              sx={{
-                color: location.pathname === "/chat-history" ? "#059134" : "#666",
-                fontFamily: 'Inter, Roboto, Helvetica, Arial, sans-serif',
-                fontWeight: 500,
-                fontSize: "16px",
-                lineHeight: "24px",
-                letterSpacing: 0,
-                textTransform: "none",
-                "&:hover": {
-                  backgroundColor: "transparent",
-                  color: "#059134",
-                },
-              }}
-              onClick={() => navigate("/chat-history")}
-            >
-              Chat History
-            </Button>
-          </Stack>
+        <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 0.5, sm: 1 } }}>
+          {/* Hide navigation buttons on mobile */}
+          {!isMobile && (
+            <Stack direction="row">
+              <Button
+                sx={{
+                  color: location.pathname === "/" ? "#059134" : "#666",
+                  fontFamily: 'Inter, Roboto, Helvetica, Arial, sans-serif',
+                  fontWeight: 500,
+                  fontSize: "16px",
+                  lineHeight: "24px",
+                  letterSpacing: 0,
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: "transparent",
+                    color: "#059134",
+                  },
+                }}
+                onClick={() => navigate("/")}
+              >
+                Discover
+              </Button>
+              <Button
+                sx={{
+                  color: location.pathname === "/chat-history" ? "#059134" : "#666",
+                  fontFamily: 'Inter, Roboto, Helvetica, Arial, sans-serif',
+                  fontWeight: 500,
+                  fontSize: "16px",
+                  lineHeight: "24px",
+                  letterSpacing: 0,
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: "transparent",
+                    color: "#059134",
+                  },
+                }}
+                onClick={() => navigate("/chat-history")}
+              >
+                Chat History
+              </Button>
+            </Stack>
+          )}
           {(() => {
             const [settingsOpen, setSettingsOpen] = React.useState(false);
             const handleSettingsOpen = () => setSettingsOpen(true);
             const handleSettingsClose = () => setSettingsOpen(false);
             return <>
               <IconButton sx={{ color: "#666" }} onClick={handleSettingsOpen}>
-                <CiSettings />
+                <CiSettings size={isMobile ? 20 : 24} />
               </IconButton>
-              <Dialog open={settingsOpen} onClose={handleSettingsClose} maxWidth="md" fullWidth>
+              <Dialog 
+                open={settingsOpen} 
+                onClose={handleSettingsClose} 
+                maxWidth="md" 
+                fullWidth
+                fullScreen={isMobile}
+              >
                 <SettingsPage />
               </Dialog>
             </>;
@@ -161,7 +178,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ onBack, onMenu, isSidebarOpen, 
           <Button>
             <Avatar
               src="https://randomuser.me/api/portraits/women/44.jpg"
-              sx={{ width: 32, height: 32 }}
+              sx={{ width: { xs: 28, sm: 32 }, height: { xs: 28, sm: 32 } }}
             />
           </Button>
         </Box>

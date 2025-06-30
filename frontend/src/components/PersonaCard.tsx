@@ -5,21 +5,28 @@ import {
   CardContent,
   Typography,
   Box,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import type { Persona } from "../types";
 
 interface PersonaCardProps {
   persona: Persona;
   onStartChat?: (persona: Persona) => void;
+  cardFullWidth?: boolean;
 }
 
-const PersonaCard: React.FC<PersonaCardProps> = ({ persona, onStartChat }) => {
+const PersonaCard: React.FC<PersonaCardProps> = ({ persona, onStartChat, cardFullWidth }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
+
   return (
     <Card
       sx={{
         borderRadius: 2,
-        width: 200,
-        gap: 3,
+        width: cardFullWidth ? '100%' : { xs: "100%", sm: 240, md: 270, lg: 250 },
+        maxWidth: cardFullWidth ? '100%' : { xs: 320, sm: 240, md: 270, lg: 250 },
         backgroundColor: "transparent",
         boxShadow: "none",
         transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
@@ -46,15 +53,17 @@ const PersonaCard: React.FC<PersonaCardProps> = ({ persona, onStartChat }) => {
       <Box sx={{ position: "relative" }}>
         <CardMedia
           component="img"
-          height="180"
+          height={isMobile ? "250" : isTablet ? "230" : "210"}
           image={persona.avatar}
           alt={persona.name}
           className="persona-image"
           sx={{
             objectFit: "cover",
+            objectPosition: "top center",
             borderRadius: "8px",
             boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
             transition: "box-shadow 0.2s ease-in-out",
+            width: "100%",
           }}
         />
         {/* Overlay for dimming effect on hover */}
@@ -91,7 +100,7 @@ const PersonaCard: React.FC<PersonaCardProps> = ({ persona, onStartChat }) => {
             transition: "opacity 0.2s, color 0.2s",
             zIndex: 2,
             fontWeight: 600,
-            fontSize: "15px",
+            fontSize: { xs: "14px", sm: "15px" },
             color: "white",
             userSelect: "none",
             cursor: "pointer",
@@ -108,7 +117,12 @@ const PersonaCard: React.FC<PersonaCardProps> = ({ persona, onStartChat }) => {
         </Box>
       </Box>
       <CardContent
-        sx={{ p: 2, pt: 1.5, pb: "0px !important", background: "transparent" }}
+        sx={{ 
+          p: { xs: 1.5, sm: 2 }, 
+          pt: { xs: 1, sm: 1.5 }, 
+          pb: "0px !important", 
+          background: "transparent" 
+        }}
       >
         <Typography
           variant="h6"
@@ -116,11 +130,12 @@ const PersonaCard: React.FC<PersonaCardProps> = ({ persona, onStartChat }) => {
           sx={{
             fontFamily: 'Inter, Roboto, Helvetica, Arial, sans-serif',
             fontWeight: 500,
-            fontSize: "16px",
-            lineHeight: "24px",
+            fontSize: { xs: "15px", sm: "16px" },
+            lineHeight: { xs: "20px", sm: "24px" },
             letterSpacing: 0,
             color: "#333",
             mb: 0.5,
+            textAlign: { xs: "center", sm: "left" },
           }}
         >
           {persona.name}
@@ -130,10 +145,11 @@ const PersonaCard: React.FC<PersonaCardProps> = ({ persona, onStartChat }) => {
           sx={{
             fontFamily: 'Inter, Roboto, Helvetica, Arial, sans-serif',
             fontWeight: 400,
-            fontSize: "14px",
-            lineHeight: "21px",
+            fontSize: { xs: "13px", sm: "14px" },
+            lineHeight: { xs: "18px", sm: "21px" },
             letterSpacing: 0,
             color: "#52946B",
+            textAlign: { xs: "center", sm: "left" },
           }}
         >
           {persona.role}

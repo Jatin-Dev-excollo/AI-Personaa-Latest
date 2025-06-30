@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, IconButton, Button } from "@mui/material";
+import { Box, IconButton, Button, useTheme, useMediaQuery } from "@mui/material";
 import {
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
@@ -16,6 +16,9 @@ const Pagination: React.FC<PaginationProps> = ({
   totalPages,
   onPageChange,
 }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   const handlePrevious = () => {
     if (currentPage > 1) {
       onPageChange(currentPage - 1);
@@ -30,20 +33,75 @@ const Pagination: React.FC<PaginationProps> = ({
 
   const renderPageNumbers = () => {
     const pages = [];
-    for (let i = 1; i <= totalPages; i++) {
+    const maxVisiblePages = isMobile ? 5 : 7;
+    
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    
+    // Adjust start page if we're near the end
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    // Add first page and ellipsis if needed
+    if (startPage > 1) {
+      pages.push(
+        <Button
+          key={1}
+          onClick={() => onPageChange(1)}
+          variant="text"
+          sx={{
+            minWidth: { xs: 36, sm: 40 },
+            height: { xs: 36, sm: 40 },
+            borderRadius: 1,
+            mx: { xs: 0.25, sm: 0.5 },
+            backgroundColor: "transparent",
+            color: "#666",
+            fontWeight: 500,
+            fontSize: { xs: 14, sm: 16 },
+            "&:hover": {
+              backgroundColor: "#f5f5f5",
+            },
+          }}
+        >
+          1
+        </Button>
+      );
+      
+      if (startPage > 2) {
+        pages.push(
+          <Box
+            key="ellipsis1"
+            sx={{
+              mx: { xs: 0.25, sm: 0.5 },
+              color: "#666",
+              fontSize: { xs: 14, sm: 16 },
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            ...
+          </Box>
+        );
+      }
+    }
+
+    // Add visible page numbers
+    for (let i = startPage; i <= endPage; i++) {
       pages.push(
         <Button
           key={i}
           onClick={() => onPageChange(i)}
           variant={currentPage === i ? "contained" : "text"}
           sx={{
-            minWidth: 40,
-            height: 40,
+            minWidth: { xs: 36, sm: 40 },
+            height: { xs: 36, sm: 40 },
             borderRadius: 1,
-            mx: 0.5,
+            mx: { xs: 0.25, sm: 0.5 },
             backgroundColor: currentPage === i ? "#2e7d32" : "transparent",
             color: currentPage === i ? "white" : "#666",
             fontWeight: 500,
+            fontSize: { xs: 14, sm: 16 },
             "&:hover": {
               backgroundColor: currentPage === i ? "#1b5e20" : "#f5f5f5",
             },
@@ -53,18 +111,62 @@ const Pagination: React.FC<PaginationProps> = ({
         </Button>
       );
     }
+
+    // Add last page and ellipsis if needed
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        pages.push(
+          <Box
+            key="ellipsis2"
+            sx={{
+              mx: { xs: 0.25, sm: 0.5 },
+              color: "#666",
+              fontSize: { xs: 14, sm: 16 },
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            ...
+          </Box>
+        );
+      }
+      
+      pages.push(
+        <Button
+          key={totalPages}
+          onClick={() => onPageChange(totalPages)}
+          variant="text"
+          sx={{
+            minWidth: { xs: 36, sm: 40 },
+            height: { xs: 36, sm: 40 },
+            borderRadius: 1,
+            mx: { xs: 0.25, sm: 0.5 },
+            backgroundColor: "transparent",
+            color: "#666",
+            fontWeight: 500,
+            fontSize: { xs: 14, sm: 16 },
+            "&:hover": {
+              backgroundColor: "#f5f5f5",
+            },
+          }}
+        >
+          {totalPages}
+        </Button>
+      );
+    }
+
     return pages;
   };
 
   return (
-    <Box sx={{ mt: 6, mb: 4 }}>
+    <Box sx={{ mt: { xs: 4, sm: 6 }, mb: { xs: 3, sm: 4 } }}>
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           flex: 1,
-          mx: 4,
+          mx: { xs: 2, sm: 4 },
         }}
       >
         <Box
@@ -72,22 +174,25 @@ const Pagination: React.FC<PaginationProps> = ({
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            maxWidth: 900,
+            maxWidth: { xs: "100%", sm: 900 },
             width: "100%",
+            flexWrap: "wrap",
           }}
         >
           <IconButton
             onClick={handlePrevious}
             disabled={currentPage === 1}
             sx={{
-              mr: 1,
+              mr: { xs: 0.5, sm: 1 },
               color: currentPage === 1 ? "#ccc" : "#666",
+              width: { xs: 36, sm: 40 },
+              height: { xs: 36, sm: 40 },
               "&:hover": {
                 backgroundColor: currentPage === 1 ? "transparent" : "#f5f5f5",
               },
             }}
           >
-            <ChevronLeftIcon />
+            <ChevronLeftIcon sx={{ fontSize: { xs: 20, sm: 24 } }} />
           </IconButton>
 
           {renderPageNumbers()}
@@ -96,15 +201,17 @@ const Pagination: React.FC<PaginationProps> = ({
             onClick={handleNext}
             disabled={currentPage === totalPages}
             sx={{
-              ml: 1,
+              ml: { xs: 0.5, sm: 1 },
               color: currentPage === totalPages ? "#ccc" : "#666",
+              width: { xs: 36, sm: 40 },
+              height: { xs: 36, sm: 40 },
               "&:hover": {
                 backgroundColor:
                   currentPage === totalPages ? "transparent" : "#f5f5f5",
               },
             }}
           >
-            <ChevronRightIcon />
+            <ChevronRightIcon sx={{ fontSize: { xs: 20, sm: 24 } }} />
           </IconButton>
         </Box>
       </Box>

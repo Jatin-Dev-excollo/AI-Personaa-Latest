@@ -4,10 +4,10 @@ import Header from "../components/Header";
 import PersonaSelectorHeader from "../components/personaSelector/PersonaSelectorHeader";
 import SearchBar from "../components/SearchBar";
 import PersonaSelectorGrid from "../components/personaSelector/PersonaSelectorGrid";
-import ChatInputBar from "../components/ChatInputBar";
 import { mockPersonas } from "../data/mockData";
 import type { Persona } from "../types";
 import { useNavigate } from "react-router-dom";
+import ChatInputBar from "../components/ChatInputBar";
 
 const PersonaSelectorPage: React.FC = () => {
   const [search, setSearch] = useState("");
@@ -32,12 +32,12 @@ const PersonaSelectorPage: React.FC = () => {
     <Box sx={{ minHeight: "100vh", bgcolor: "#fff", display: 'flex', flexDirection: 'column' }}>
       <Header />
       <PersonaSelectorHeader />
-      <Box sx={{ width: '100%', maxWidth: 700, mx: "auto", mb: 3 }}>
-        <SearchBar value={search} onChange={setSearch} placeholder="Search" />
+      <Box sx={{ width: '100%', maxWidth: 1300, mx: "auto", mb: 3 }}>
+        <SearchBar value={search} onChange={setSearch} placeholder="Search" maxWidth={700} fullWidth />
       </Box>
       <PersonaSelectorGrid personas={filteredPersonas} onSelect={handleSelect} onViewPersona={handleViewPersona} />
       <Box sx={{ height: 32 }} />
-      <Box sx={{ width: '100%', maxWidth: 900, mx: 'auto', pb: 4, px: 3 }}>
+      <Box sx={{ width: '100%', maxWidth: 1200, mx: 'auto', pb: 4, px: 3, mt: 6 }}>
         <ChatInputBar />
       </Box>
     </Box>

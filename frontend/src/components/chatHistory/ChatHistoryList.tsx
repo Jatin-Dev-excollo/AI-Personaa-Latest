@@ -14,7 +14,7 @@ interface ChatHistoryListProps {
 }
 
 const ChatHistoryList: React.FC<ChatHistoryListProps> = ({ chats }) => (
-  <Box>
+  <Box ml={2}>
     {chats.map((chat, idx) => (
       <Box key={idx} sx={{ mb: 0.5 }}>
         <ChatHistoryItem {...chat} />

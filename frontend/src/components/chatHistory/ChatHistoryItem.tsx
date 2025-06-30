@@ -15,7 +15,7 @@ const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({ avatar, name, message
       <Typography sx={{ fontWeight: 700, fontSize: 17, color: '#222', lineHeight: 1.1 }}>{name}</Typography>
       <Typography sx={{ color: '#388e3c', fontWeight: 400, fontSize: 15, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 400 }}>{message}</Typography>
     </Box>
-    <Typography sx={{ color: '#7bb47b', fontWeight: 400, fontSize: 15, minWidth: 90, textAlign: 'right', ml: 0.5 }}>{date}</Typography>
+    <Typography sx={{ color: '#7bb47b', fontWeight: 400, fontSize: 15, minWidth: 70, textAlign: 'right', ml: 0, mr: 2.5 }}>{date}</Typography>
   </Box>
 );
 

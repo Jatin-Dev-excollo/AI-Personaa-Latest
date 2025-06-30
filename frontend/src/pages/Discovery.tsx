@@ -1,11 +1,14 @@
 import React, { useState, useMemo } from "react";
 import {
-  ThemeProvider,
-  createTheme,
-  CssBaseline,
   Container,
   Box,
+  useTheme,
+  useMediaQuery,
+  IconButton,
+  Menu,
+  MenuItem,
 } from "@mui/material";
+import { FilterList as FilterIcon } from "@mui/icons-material";
 import Header from "../components/Header";
 import SearchBar from "../components/SearchBar";
 import FilterChips from "../components/FilterChips";
@@ -14,38 +17,26 @@ import Pagination from "../components/Pagination";
 import { mockPersonas, mockFilters } from "../data/mockData";
 import type { Persona, FilterOption } from "../types";
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#2e7d32",
-      light: "#e8f5e8",
-      dark: "#1b5e20",
-    },
-    background: {
-      default: "#ffffff",
-      paper: "#ffffff",
-    },
-  },
-  typography: {
-    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-  },
-});
-
 interface DiscoveryProps {
   onStartChat: (persona: Persona) => void;
 }
+
+const SEARCH_AREA_WIDTH = { xs: '100%', sm: 900, md: 1100, lg: 1200 };
+const menuOptions = ['Marketing', 'Technology', 'Sales'];
 
 const Discovery: React.FC<DiscoveryProps> = ({ onStartChat }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<FilterOption[]>(mockFilters);
   const [currentPage, setCurrentPage] = useState(1);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const itemsPerPage = 8;
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
   // Filter logic
   const filteredPersonas = useMemo(() => {
     let filtered = mockPersonas;
-
-    // Apply search filter
     if (searchTerm) {
       filtered = filtered.filter(
         (persona) =>
@@ -53,15 +44,12 @@ const Discovery: React.FC<DiscoveryProps> = ({ onStartChat }) => {
           persona.role.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-
-    // Apply department filter
     const activeFilters = filters.filter((f) => f.active).map((f) => f.value);
     if (activeFilters.length > 0) {
       filtered = filtered.filter((persona) =>
         activeFilters.includes(persona.department)
       );
     }
-
     return filtered;
   }, [searchTerm, filters]);
 
@@ -82,48 +70,69 @@ const Discovery: React.FC<DiscoveryProps> = ({ onStartChat }) => {
           : filter
       )
     );
-    setCurrentPage(1); // Reset to first page when filters change
+    setCurrentPage(1);
   };
-
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
-    setCurrentPage(1); // Reset to first page when search changes
+    setCurrentPage(1);
   };
-
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Box sx={{ minHeight: "100vh", backgroundColor: "#ffffff" }}>
-        <Header />
-
-        <Container sx={{ py: 4 }}>
-          {/* Search Section */}
-          <SearchBar value={searchTerm} onChange={handleSearchChange} maxWidth={900} />
-
-          {/* Filter Section */}
-          <FilterChips filters={filters} onFilterChange={handleFilterChange} />
-
-          {/* Personas Grid */}
+    <Box sx={{ minHeight: "100vh", backgroundColor: "#ffffff", overflowX: "hidden", position: 'relative' }}>
+      <Header />
+      <Container
+        maxWidth={false}
+        sx={{
+          py: { xs: 2, sm: 3, md: 4 },
+          px: { xs: 1, sm: 3, md: 4 },
+          maxWidth: { xs: "100%", sm: "900px", md: "1200px", lg: "1200px" },
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        {/* Search and Filter Section (aligned area) */}
+        <Box sx={{ width: '100%', maxWidth: SEARCH_AREA_WIDTH, mb: { xs: 2, sm: 3 } }}>
+          <Box sx={{ display: "flex", justifyContent: "center", width: '100%' }}>
+            <SearchBar
+              value={searchTerm}
+              onChange={handleSearchChange}
+              maxWidth="100%"
+              fullWidth={true}
+            />
+          </Box>
+          <Box sx={{ width: '100%', mt: { xs: 1, sm: 1 }, display: 'flex', justifyContent: 'flex-start' }}>
+            <FilterChips filters={filters} onFilterChange={handleFilterChange} />
+          </Box>
+        </Box>
+        {/* Personas Grid - aligned with search bar */}
+        <Box sx={{ width: '100%', maxWidth: SEARCH_AREA_WIDTH, display: 'flex', justifyContent: 'flex-start' }}>
           <PersonaGrid
             personas={paginatedPersonas}
             onStartChat={onStartChat}
           />
-
-          {/* Pagination */}
-          {totalPages > 1 && (
+        </Box>
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <Box sx={{ display: "flex", justifyContent: "center", mt: { xs: 3, sm: 4 }, mb: { xs: 2, sm: 3 } }}>
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
               onPageChange={handlePageChange}
             />
-          )}
-        </Container>
-      </Box>
-    </ThemeProvider>
+          </Box>
+        )}
+      </Container>
+    </Box>
   );
 };
 

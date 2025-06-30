@@ -7,7 +7,7 @@ interface ChatHistoryTabsProps {
 }
 
 const ChatHistoryTabs: React.FC<ChatHistoryTabsProps> = ({ tab, onTabChange }) => (
-  <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 2, mt: 1, ml: 1 }}>
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 2, mt: 1, ml: 1.5 }}>
     <Typography
       sx={{
         fontWeight: 600,

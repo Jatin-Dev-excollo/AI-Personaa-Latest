@@ -78,10 +78,12 @@ const ChatHistoryPage: React.FC = () => {
     <Box sx={{ minHeight: "100vh", backgroundColor: "#ffffff" }}>
       <Header />
       <Container sx={{ py: 4, maxWidth: 900 }}>
-        <Box sx={{ width: '100%', maxWidth: 1300, mx: 'auto', mb: 3 }}>
-          <SearchBar value={search} onChange={setSearch} placeholder="Search" fullWidth />
+        <Box sx={{ width: '100%', mx: 'auto', mb: 2, px: 1 }}>
+          <SearchBar value={search} onChange={setSearch} placeholder="Search" fullWidth maxWidth={1200} />
         </Box>
-        <ChatHistoryTabs tab={tab} onTabChange={setTab} />
+        <Box sx={{ px: 1 }}>
+          <ChatHistoryTabs tab={tab} onTabChange={setTab} />
+        </Box>
         <ChatHistoryList chats={filteredChats} />
       </Container>
     </Box>

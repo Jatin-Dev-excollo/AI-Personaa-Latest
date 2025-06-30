@@ -10,8 +10,8 @@ interface PersonaSelectorGridProps {
 }
 
 const PersonaSelectorGrid: React.FC<PersonaSelectorGridProps> = ({ personas, onSelect, onViewPersona }) => (
-  <Box sx={{ width: '100%', maxWidth: 700, mx: 'auto', mt: -1 }}>
-    <Grid container spacing={4} justifyContent="center">
+  <Box sx={{ width: '100%', maxWidth: 1000, mx: 'auto', mt: -2 }}>
+    <Grid container columnSpacing={8} rowSpacing={6} justifyContent="center">
       {personas.map((persona) => (
         <Grid item xs={12} sm={4} md={4} lg={4} xl={4} key={persona.id} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <IconButton onClick={() => onSelect(persona)} sx={{ p: 0, mb: 1.5, '&:hover': { background: 'transparent' } }}>
